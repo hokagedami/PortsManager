@@ -1,0 +1,68 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PortsManager.Desktop.Views.SettingsWindow"
+        Title="Settings"
+        Icon="/Assets/port_cld.png"
+        Width="450" Height="380"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <ScrollViewer Padding="24">
+    <StackPanel Spacing="24">
+      <!-- Auto Refresh Section -->
+      <StackPanel Spacing="12">
+        <TextBlock Text="Auto Refresh" FontWeight="SemiBold" FontSize="14" />
+        <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="6" Padding="16">
+          <StackPanel Spacing="12">
+            <CheckBox x:Name="AutoRefreshCheckBox" Content="Enable auto refresh" IsCheckedChanged="OnSettingChanged" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Refresh interval:" VerticalAlignment="Center" />
+              <NumericUpDown x:Name="RefreshIntervalInput" Minimum="2" Maximum="300" Width="100" />
+              <TextBlock Text="seconds" VerticalAlignment="Center" Opacity="0.7" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+
+      <!-- Behavior Section -->
+      <StackPanel Spacing="12">
+        <TextBlock Text="Behavior" FontWeight="SemiBold" FontSize="14" />
+        <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="6" Padding="16">
+          <StackPanel Spacing="12">
+            <CheckBox x:Name="ConfirmTerminateCheckBox" Content="Confirm before terminating processes" IsCheckedChanged="OnSettingChanged" />
+            <CheckBox x:Name="ShowSystemProcessesCheckBox" Content="Show system processes (PID 0 and 4)" IsCheckedChanged="OnSettingChanged" />
+            <CheckBox x:Name="StartMinimizedCheckBox" Content="Start minimized to system tray" IsCheckedChanged="OnSettingChanged" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+
+      <!-- Appearance Section -->
+      <StackPanel Spacing="12">
+        <TextBlock Text="Appearance" FontWeight="SemiBold" FontSize="14" />
+        <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="6" Padding="16">
+          <StackPanel Spacing="12">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Theme:" VerticalAlignment="Center" />
+              <ComboBox x:Name="ThemeComboBox" Width="150" SelectionChanged="OnThemeChanged">
+                <ComboBoxItem Content="System" Tag="System" />
+                <ComboBoxItem Content="Light" Tag="Light" />
+                <ComboBoxItem Content="Dark" Tag="Dark" />
+              </ComboBox>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+
+      <!-- About Section -->
+      <StackPanel Spacing="12">
+        <TextBlock Text="About" FontWeight="SemiBold" FontSize="14" />
+        <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" CornerRadius="6" Padding="16">
+          <StackPanel Spacing="4">
+            <TextBlock Text="PortsManager" FontWeight="SemiBold" />
+            <TextBlock Text="Version 1.0.0" Opacity="0.7" />
+            <TextBlock Text="A cross-platform tool to manage listening ports" Opacity="0.7" TextWrapping="Wrap" Margin="0,8,0,0" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</Window>

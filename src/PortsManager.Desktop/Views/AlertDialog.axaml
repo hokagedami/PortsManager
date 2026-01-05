@@ -1,0 +1,12 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PortsManager.Desktop.Views.AlertDialog"
+        Icon="/Assets/port_cld.png"
+        Width="420" Height="180"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <StackPanel Margin="16" Spacing="12">
+    <TextBlock x:Name="MessageText" TextWrapping="Wrap" />
+    <Button x:Name="OkButton" Content="OK" HorizontalAlignment="Right" />
+  </StackPanel>
+</Window>

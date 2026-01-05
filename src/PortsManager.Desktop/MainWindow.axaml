@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PortsManager.Desktop.MainWindow"
+        Width="700" Height="500"
+        Title="PortsManager"
+        Icon="/Assets/port_cld.png"
+        WindowStartupLocation="CenterScreen">
+  <DockPanel>
+    <!-- Toolbar -->
+    <Border DockPanel.Dock="Top" BorderThickness="0,0,0,1" Padding="12,8"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <Grid ColumnDefinitions="Auto,*">
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+          <Button Click="OnRefreshClick" Padding="10,6" ToolTip.Tip="Refresh">
+            <PathIcon Data="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" Width="16" Height="16" />
+          </Button>
+          <Button Click="OnTerminateClick" Padding="10,6" ToolTip.Tip="Terminate">
+            <PathIcon Data="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" Width="16" Height="16" Foreground="#E53935" />
+          </Button>
+          <Button Click="OnCopyClick" Padding="10,6" ToolTip.Tip="Copy Details">
+            <PathIcon Data="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" Width="16" Height="16" />
+          </Button>
+          <Border Width="1" Margin="4,0" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+          <Button Click="OnSettingsClick" Padding="10,6" ToolTip.Tip="Settings">
+            <PathIcon Data="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" Width="16" Height="16" />
+          </Button>
+        </StackPanel>
+
+        <TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="Search by port, process, or PID..."
+                 Margin="16,0" MaxWidth="300" HorizontalAlignment="Center" />
+      </Grid>
+    </Border>
+
+    <!-- Status Bar -->
+    <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" Padding="12,6"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <TextBlock Text="{Binding StatusMessage}" Opacity="0.7" />
+    </Border>
+
+    <!-- Main Content -->
+    <Border Margin="12" BorderThickness="1" CornerRadius="4" ClipToBounds="True"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+      <DockPanel>
+        <!-- Header Row -->
+        <Border DockPanel.Dock="Top" BorderThickness="0,0,0,1" Padding="8,10"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+          <Grid ColumnDefinitions="70,70,*,80,100">
+            <TextBlock Grid.Column="0" Text="Port" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="1" Text="Proto" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="2" Text="Process" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="3" Text="PID" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="4" Text="Status" FontWeight="SemiBold" />
+          </Grid>
+        </Border>
+
+        <!-- Data Rows -->
+        <ListBox x:Name="PortsList" ItemsSource="{Binding Ports}" SelectedItem="{Binding SelectedPort}"
+                 DoubleTapped="OnRowDoubleTapped">
+          <ListBox.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="View Details" Click="OnViewDetailsClick" />
+              <Separator />
+              <MenuItem Header="Terminate" Click="OnTerminateClick" />
+              <MenuItem Header="Copy Details" Click="OnCopyClick" />
+            </ContextMenu>
+          </ListBox.ContextMenu>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="70,70,*,80,100" Margin="0,2">
+                <TextBlock Grid.Column="0" Text="{Binding Port}" />
+                <TextBlock Grid.Column="1" Text="{Binding Protocol}" Opacity="0.7" />
+                <TextBlock Grid.Column="2" Text="{Binding ProcessName}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="3" Text="{Binding Pid}" Opacity="0.7" />
+                <TextBlock Grid.Column="4" Text="{Binding Status}" Foreground="Green" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+  </DockPanel>
+</Window>
