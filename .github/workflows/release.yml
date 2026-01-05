@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+            artifact: PortsManager-Windows-x64
+            extension: .zip
+          - os: macos-latest
+            runtime: osx-x64
+            artifact: PortsManager-macOS-x64
+            extension: .tar.gz
+          - os: macos-latest
+            runtime: osx-arm64
+            artifact: PortsManager-macOS-arm64
+            extension: .tar.gz
+          - os: ubuntu-latest
+            runtime: linux-x64
+            artifact: PortsManager-Linux-x64
+            extension: .tar.gz
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Publish
+      run: dotnet publish src/PortsManager.Desktop/PortsManager.Desktop.csproj --configuration Release --runtime ${{ matrix.runtime }} --self-contained true -p:PublishSingleFile=true -o ./publish
+
+    - name: Create archive (Windows)
+      if: runner.os == 'Windows'
+      run: Compress-Archive -Path ./publish/* -DestinationPath ${{ matrix.artifact }}.zip
+
+    - name: Create archive (Unix)
+      if: runner.os != 'Windows'
+      run: tar -czvf ${{ matrix.artifact }}.tar.gz -C ./publish .
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact }}
+        path: ${{ matrix.artifact }}${{ matrix.extension }}
+
+  create-release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: artifacts/**/*
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
