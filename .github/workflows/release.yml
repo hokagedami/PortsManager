@@ -62,15 +62,70 @@ jobs:
       contents: write
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
         path: artifacts
 
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Generate release notes
+      env:
+        VERSION: ${{ steps.version.outputs.VERSION }}
+        REPO: ${{ github.repository }}
+      run: |
+        # Get previous tag
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+        # Generate commit log
+        if [ -n "$PREV_TAG" ]; then
+          COMMITS=$(git log --pretty=format:"- %s" $PREV_TAG..HEAD)
+        else
+          COMMITS=$(git log --pretty=format:"- %s" HEAD~10..HEAD)
+        fi
+
+        # Write release notes to file
+        cat > release_notes.md << ENDOFFILE
+        ## PortsManager ${VERSION}
+
+        A cross-platform desktop application to identify and manage processes bound to network ports.
+
+        ### Downloads
+
+        | Platform | Architecture | Download |
+        |----------|--------------|----------|
+        | Windows | x64 | [PortsManager-Windows-x64.zip](https://github.com/${REPO}/releases/download/${VERSION}/PortsManager-Windows-x64.zip) |
+        | macOS | Intel (x64) | [PortsManager-macOS-x64.tar.gz](https://github.com/${REPO}/releases/download/${VERSION}/PortsManager-macOS-x64.tar.gz) |
+        | macOS | Apple Silicon (arm64) | [PortsManager-macOS-arm64.tar.gz](https://github.com/${REPO}/releases/download/${VERSION}/PortsManager-macOS-arm64.tar.gz) |
+        | Linux | x64 | [PortsManager-Linux-x64.tar.gz](https://github.com/${REPO}/releases/download/${VERSION}/PortsManager-Linux-x64.tar.gz) |
+
+        ### Installation
+
+        **Windows:** Extract the zip file and run \`PortsManager.Desktop.exe\`
+
+        **macOS:** Extract the archive and run \`PortsManager.Desktop\`. You may need to allow the app in System Preferences > Security & Privacy.
+
+        **Linux:** Extract the archive, make executable with \`chmod +x PortsManager.Desktop\`, and run \`./PortsManager.Desktop\`
+
+        ### What's Changed
+
+        ${COMMITS}
+        ENDOFFILE
+
+        # Remove leading whitespace from heredoc
+        sed -i 's/^        //' release_notes.md
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: artifacts/**/*
-        generate_release_notes: true
+        body_path: release_notes.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
