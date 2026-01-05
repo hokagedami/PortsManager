@@ -88,7 +88,8 @@ jobs:
         if [ -n "$PREV_TAG" ]; then
           COMMITS=$(git log --pretty=format:"- %s" $PREV_TAG..HEAD)
         else
-          COMMITS=$(git log --pretty=format:"- %s" HEAD~10..HEAD)
+          # First release - get all commits
+          COMMITS=$(git log --pretty=format:"- %s")
         fi
 
         # Write release notes to file
