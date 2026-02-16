@@ -126,6 +126,11 @@ public sealed partial class MainWindow : Window
         _viewModel.ApplySettings(settings);
     }
 
+    private void OnClearSearchClick(object? sender, RoutedEventArgs e)
+    {
+        _viewModel.SearchText = string.Empty;
+    }
+
     private async void OnRowDoubleTapped(object? sender, TappedEventArgs e)
     {
         await ShowDetailsDialog();

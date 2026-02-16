@@ -27,8 +27,18 @@
           </Button>
         </StackPanel>
 
-        <TextBox Grid.Column="1" Text="{Binding SearchText}" Watermark="Search by port, process, or PID..."
-                 Margin="16,0" MaxWidth="300" HorizontalAlignment="Center" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="16,0">
+          <TextBox x:Name="SearchBox"
+                   Text="{Binding SearchText}"
+                   Watermark="Search by port, process, or PID..."
+                   Width="300" />
+          <Button Click="OnClearSearchClick"
+                  Margin="8,0,0,0"
+                  Padding="10,6"
+                  ToolTip.Tip="Clear Search">
+            <TextBlock Text="X" />
+          </Button>
+        </StackPanel>
       </Grid>
     </Border>
 
